@@ -17,6 +17,61 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
+var lastKey = 0u;
+var todosRepository = new List<Todo>()
+{
+  { new Todo(Id: lastKey++, Text: "text-1", Important: false, Done: false) },
+  { new Todo(Id: lastKey++, Text: "text-2", Important: false, Done: true) },
+  { new Todo(Id: lastKey++, Text: "text-3", Important: true, Done: false) },
+  { new Todo(Id: lastKey++, Text: "text-4", Important: true, Done: true) },
+};
+
+var todosGroup = app.MapGroup("/api/todos")
+  .WithOpenApi();
+
+todosGroup.MapGet("/", 
+  () => TypedResults.Json(todosRepository));
+
+todosGroup.MapGet("/{id:long}", 
+  (long id) => todosRepository.SingleOrDefault(t => t.Id == id) is { } todo
+      ? Results.Json(todo)
+      : Results.NotFound())
+  .WithName("TodoById");
+
+todosGroup.MapPost("/", 
+  (NewTodo newTodo, HttpContext context, LinkGenerator linkGenerator) => 
+  {
+    var todo = new Todo(Id: lastKey++, newTodo.Text, newTodo.Important, newTodo.Done);
+    var todoLink = linkGenerator.GetUriByName(context, endpointName: "TodoById", new { id = todo.Id });
+
+    todosRepository.Add(todo);
+    return TypedResults.Created(todoLink, todo); 
+  });
+
+todosGroup.MapPut("/{id:long}", 
+  (long id, NewTodo newTodo, HttpContext context, LinkGenerator linkGenerator) => 
+  {
+    if (todosRepository.SingleOrDefault(i => i.Id == id) is not { } oldTodo)
+      return Results.NotFound();
+
+    var todo = new Todo(oldTodo.Id, newTodo.Text, newTodo.Important, newTodo.Done);
+    var todoLink = linkGenerator.GetUriByName(context, endpointName: "TodoById", new { id = todo.Id });
+
+    todosRepository.Remove(oldTodo);
+    todosRepository.Add(todo);
+    return Results.Json(todo);
+  });
+
+todosGroup.MapDelete("/{id:long}", 
+  (long id) => 
+  {
+    if (todosRepository.SingleOrDefault(i => i.Id == id) is not { } oldTodo)
+      return Results.NotFound();
+
+    todosRepository.Remove(oldTodo);
+    return Results.Ok();
+  });
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -45,3 +100,7 @@ internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary
 {
   public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+internal record Todo(long Id, string Text, bool Important, bool Done);
+
+internal record NewTodo(string Text, bool Important, bool Done);
