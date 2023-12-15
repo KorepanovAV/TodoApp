@@ -18,13 +18,9 @@ if (app.Environment.IsDevelopment())
 }
 
 var lastKey = 0u;
-var todosRepository = new List<Todo>()
-{
-  { new Todo(Id: lastKey++, Text: "text-1", Important: false, Done: false) },
-  { new Todo(Id: lastKey++, Text: "text-2", Important: false, Done: true) },
-  { new Todo(Id: lastKey++, Text: "text-3", Important: true, Done: false) },
-  { new Todo(Id: lastKey++, Text: "text-4", Important: true, Done: true) },
-};
+var todosRepository = Enumerable.Range(0, 10)
+  .Select((_) => new Todo(Id: lastKey++, Text: $"task#{lastKey} text", Important: Random.Shared.NextDouble() >= 0.5, Done: Random.Shared.NextDouble() >= 0.5))
+  .ToList();
 
 var todosGroup = app.MapGroup("/api/todos")
   .WithOpenApi();
@@ -72,34 +68,9 @@ todosGroup.MapDelete("/{id:long}",
     return Results.Ok();
   });
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-  var forecast = Enumerable.Range(1, 5).Select(index =>
-      new WeatherForecast
-      (
-          DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-          Random.Shared.Next(-20, 55),
-          summaries[Random.Shared.Next(summaries.Length)]
-      ))
-      .ToArray();
-  return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 app.MapFallbackToFile("/index.html");
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 
 internal record Todo(long Id, string Text, bool Important, bool Done);
 
