@@ -1,19 +1,44 @@
-﻿#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
+﻿.root {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.header {
+    background-color: var(--persian-green);
+    padding: 1em;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.right {
+    background-color: var(--saffron);
+    flex: 0 0 12em;
+}
+
+.content {
+    background-color: var(--sandy-brown);
+    flex: 1;
+}
+
+.TaskAdder_label {
+    margin-right: 1em;
+}
+
+.TaskAdder_text {
+    width: 50%;
+}
+
+.TaskAdder_element {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.TodoItem {
+    margin: 1em;
     text-align: center;
-}
-
-tr:nth-child(even) {
-    background: #F2F2F2;
-}
-
-tr:nth-child(odd) {
-    background: #FFF;
-}
-
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
 }

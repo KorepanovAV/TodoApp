@@ -1,55 +1,150 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEventHandler } from 'react';
+import { useId } from 'react';
+import { Header } from './components/Header/Header';
+import { Main } from './components/Main/Main';
+import { Right } from './components/Right/Right';
+import { Content } from './components/Content/Content';
+
 import './App.css';
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+interface IAddTodo {
+    text?: string;
+    important?: boolean;
+}
+
+interface IAddTodoProps {
+    onAddTodo: (todo?: IAddTodo) => void;
+}
+
+function AddTodo(props: IAddTodoProps) {
+    const { onAddTodo } = props;
+    const checkboxLabelId = useId();
+    const [form, setForm] = useState<IAddTodo>();
+    const addClickHandler: MouseEventHandler = () => onAddTodo(form);
+
+    return (
+        <div className="AddTodo">
+            <label className="TaskAdder_label TaskAdder_element" >Add new task</label>
+            <input className="TaskAdder_element TaskAdder_text" type="text" placeholder="Text" onChange={(e) => setForm({ ...form, text: e.target.value })} />
+
+            <input className="TaskAdder_element" type="checkbox" id={checkboxLabelId} onChange={(e) => setForm({ ...form, important: e.target.checked })} />
+            <label className="TaskAdder_element" htmlFor={checkboxLabelId}>Important</label>
+
+            <input className="TaskAdder_element" type="button" value="Add" onClick={addClickHandler} />
+        </div>
+    );
+}
+
+interface ITodo {
+    id: number;
+    text: string;
+    important: boolean;
+    done: boolean;
+}
+
+interface ITodoActions {
+    onTodoDelete: (todo: ITodo) => void;
+    onTodoPerform: (todo: ITodo) => void;
+    onTodoToWork: (todo: ITodo) => void;
+}
+
+interface ITodoItemProps {
+    todo: ITodo;
+    todoActions: ITodoActions;
+}
+
+function TodoItem(props: ITodoItemProps) {
+    const { todo, todoActions: { onTodoDelete, onTodoPerform, onTodoToWork } } = props;
+
+    const importanceMark = todo.important
+        ? <span className="important">!</span>
+        : <span className="important">&nbsp;</span>;
+
+    const actionButton = todo.done
+        ? <input type="button" value="To work" onClick={() => onTodoToWork(todo)} />
+        : <input type="button" value="Perform" onClick={() => onTodoPerform(todo)} />;
+
+    return (
+        <>
+            <div className="TodoItem">
+                {importanceMark}&nbsp;
+                <a href={`#/todo/${todo.id}`}>{todo.text}</a>&nbsp;
+                {actionButton}&nbsp;
+                <input type="button" value="Delete" onClick={() => onTodoDelete(todo)} />
+            </div>
+        </>
+    );
+}
+
+interface ITodoListProps {
+    todos: ITodo[];
+    todoActions: ITodoActions;
+}
+
+function TodoList(props: ITodoListProps) {
+    const { todos, todoActions } = props;
+
+    const content = todos === undefined
+        ? <p><em>Loading...</em></p>
+        :
+        <div>
+            {todos.map(todo =>
+                <TodoItem key={todo.id} todo={todo} todoActions={todoActions} />
+            )}
+        </div>;
+
+    return content;
 }
 
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+    const [todos, setTodos] = useState<ITodo[]>([]);
+    const actions: ITodoActions = {
+        onTodoDelete: handleTodoDelete,
+        onTodoPerform: handleTodoPerform,
+        onTodoToWork: handleTodoToWork
+    };
 
     useEffect(() => {
-        populateWeatherData();
+        populateTodos();
     }, []);
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tabelLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
     return (
-        <div>
-            <h1 id="tabelLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
+        <div className="root">
+            <Header><AddTodo onAddTodo={handleAddTodo} /></Header>
+            <Main>
+                <Content><TodoList todos={todos} todoActions={actions} /></Content>
+                <Right>#right</Right>
+            </Main>
         </div>
     );
 
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
+    async function populateTodos() {
+        const response = await fetch('api/todos');
+        const data = await response.json() as ITodo[];
+        setTodos(data.sort((l, r) => l.id - r.id));
+    }
+
+    async function handleAddTodo(todo?: IAddTodo) {
+        const body = JSON.stringify({ text: "empty", important: false, done: false, ...todo });
+        await fetch('api/todos', { method: 'POST', headers: { "Content-Type": "application/json", }, body });
+        await populateTodos();
+    }
+
+    async function handleTodoDelete(todo: ITodo) {
+        await fetch(`api/todos/${todo.id}`, { method: 'DELETE' });
+        await populateTodos();
+    }
+
+    async function handleTodoPerform(todo: ITodo) {
+        const body = JSON.stringify({ ...todo, done: true });
+        await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
+        await populateTodos();
+    }
+
+    async function handleTodoToWork(todo: ITodo) {
+        const body = JSON.stringify({ ...todo, done: false });
+        await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
+        await populateTodos();
     }
 }
 

@@ -1,4 +1,20 @@
+body {
+    margin: 0;
+}
+
 :root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    --charcoal: #264653ff;
+    --persian-green: #2a9d8fff;
+    --saffron: #e9c46aff;
+    --sandy-brown: #f4a261ff;
+    --burnt-sienna: #e76f51ff;
+}
+
+/*:root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -66,3 +82,4 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+*/
