@@ -1,4 +1,5 @@
 import { useEffect, useState, MouseEventHandler } from 'react';
+import { HashRouter, Route, Routes, NavLink } from 'react-router-dom';
 import { useId } from 'react';
 import { Header } from './components/Header/Header';
 import { Main } from './components/Main/Main';
@@ -79,24 +80,47 @@ function TodoItem(props: ITodoItemProps) {
 interface ITodoListProps {
     todos: ITodo[];
     todoActions: ITodoActions;
+    todoCompare: (l: ITodo, r: ITodo) => number;
 }
 
 function TodoList(props: ITodoListProps) {
-    const { todos, todoActions } = props;
+    const { todos, todoActions, todoCompare } = props;
 
     const content = todos === undefined
         ? <p><em>Loading...</em></p>
         :
         <div>
-            {todos.map(todo =>
-                <TodoItem key={todo.id} todo={todo} todoActions={todoActions} />
+            {todos
+                .sort(todoCompare)
+                .map(todo =>
+                    <TodoItem key={todo.id} todo={todo} todoActions={todoActions} />
             )}
         </div>;
 
     return content;
 }
 
-function App() {
+function TodoSort() {
+    return (
+        <>
+            <span>Сортировать</span>
+            <nav>
+                <div><NavLink to="/sort/importance">По важности</NavLink></div>
+                <div><NavLink to="/sort/completed">По выполненности</NavLink></div>
+            </nav>
+        </>    
+    );
+}
+
+interface ITodosProps {
+    todoCompare?: (l: ITodo, r: ITodo) => number;
+}
+
+function Todos(props: ITodosProps) {
+    const defaultTodoCompare: (l: ITodo, r: ITodo) => number = (l, r) => l.id - r.id;
+    const todoCompare: (l: ITodo, r: ITodo) => number
+        = props.todoCompare ?? defaultTodoCompare;
+
     const [todos, setTodos] = useState<ITodo[]>([]);
     const actions: ITodoActions = {
         onTodoDelete: handleTodoDelete,
@@ -104,24 +128,25 @@ function App() {
         onTodoToWork: handleTodoToWork
     };
 
+
     useEffect(() => {
         populateTodos();
     }, []);
 
     return (
-        <div className="root">
+        <>
             <Header><AddTodo onAddTodo={handleAddTodo} /></Header>
             <Main>
-                <Content><TodoList todos={todos} todoActions={actions} /></Content>
-                <Right>#right</Right>
+                <Content><TodoList todos={todos} todoActions={actions} todoCompare={todoCompare} /></Content>
+                <Right><TodoSort/></Right>
             </Main>
-        </div>
+        </>
     );
 
     async function populateTodos() {
         const response = await fetch('api/todos');
         const data = await response.json() as ITodo[];
-        setTodos(data.sort((l, r) => l.id - r.id));
+        setTodos(data);
     }
 
     async function handleAddTodo(todo?: IAddTodo) {
@@ -146,6 +171,21 @@ function App() {
         await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
         await populateTodos();
     }
+}
+
+function App() {
+
+    return (
+        <HashRouter>
+            <div className="root">
+                <Routes>
+                    <Route path="/" element={<Todos />} />
+                    <Route path="/sort/importance" element={<Todos todoCompare={(l, r) => l.important != r.important ? (r.important ? 1 : -1) : (l.id - r.id)} />} />
+                    <Route path="/sort/completed" element={<Todos todoCompare={(l, r) => l.done != r.done ? (r.done ? 1 : -1) : (l.id - r.id)} />} />
+                </Routes>
+            </div>
+        </HashRouter>
+    );
 }
 
 export default App;

@@ -18,6 +18,7 @@
 .right {
     background-color: var(--saffron);
     flex: 0 0 12em;
+    padding: 1em;
 }
 
 .content {
