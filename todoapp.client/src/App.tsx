@@ -1,91 +1,12 @@
 import { useEffect, useState, MouseEventHandler } from 'react';
 import { HashRouter, Route, Routes, NavLink, useParams } from 'react-router-dom';
 import { useId } from 'react';
-import { Header } from './components/header/header';
-import { Main } from './components/main/main';
-import { Right } from './components/right/right';
-import { Content } from './components/content/content';
-import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
 import { ITodo } from './components/ITodo';
-import { ITodoActions } from './components/ITodoActions';
-import { TodoList } from './components/todo-list/todo-list';
+import { Todos } from './components/todos/todos';
 
 import block from 'bem-cn-lite';
 
 import './App.css';
-
-function TodoSort() {
-    return (
-        <>
-            <span>Сортировать</span>
-            <nav>
-                <div><NavLink to="/sort/importance">По важности</NavLink></div>
-                <div><NavLink to="/sort/completed">По выполненности</NavLink></div>
-            </nav>
-        </>    
-    );
-}
-
-interface ITodosProps {
-    todoCompare?: (l: ITodo, r: ITodo) => number;
-}
-
-function Todos(props: ITodosProps) {
-    const defaultTodoCompare: (l: ITodo, r: ITodo) => number = (l, r) => l.id - r.id;
-    const todoCompare: (l: ITodo, r: ITodo) => number
-        = props.todoCompare ?? defaultTodoCompare;
-
-    const [todos, setTodos] = useState<ITodo[]>([]);
-    const actions: ITodoActions = {
-        onTodoDelete: handleTodoDelete,
-        onTodoPerform: handleTodoPerform,
-        onTodoToWork: handleTodoToWork
-    };
-
-
-    useEffect(() => {
-        populateTodos();
-    }, []);
-
-    return (
-        <>
-            <Header><AddTodo onAddTodo={handleAddTodo} /></Header>
-            <Main>
-                <Content><TodoList todos={todos} todoActions={actions} todoCompare={todoCompare} /></Content>
-                <Right><TodoSort/></Right>
-            </Main>
-        </>
-    );
-
-    async function populateTodos() {
-        const response = await fetch('api/todos');
-        const data = await response.json() as ITodo[];
-        setTodos(data);
-    }
-
-    async function handleAddTodo(todo?: IAddTodo) {
-        const body = JSON.stringify({ text: "empty", important: false, done: false, ...todo });
-        await fetch('api/todos', { method: 'POST', headers: { "Content-Type": "application/json", }, body });
-        await populateTodos();
-    }
-
-    async function handleTodoDelete(todo: ITodo) {
-        await fetch(`api/todos/${todo.id}`, { method: 'DELETE' });
-        await populateTodos();
-    }
-
-    async function handleTodoPerform(todo: ITodo) {
-        const body = JSON.stringify({ ...todo, done: true });
-        await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
-        await populateTodos();
-    }
-
-    async function handleTodoToWork(todo: ITodo) {
-        const body = JSON.stringify({ ...todo, done: false });
-        await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
-        await populateTodos();
-    }
-}
 
 function TodoCard() {
     const params = useParams<{ id: string}>();
