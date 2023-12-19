@@ -6,36 +6,13 @@ import { Main } from './components/main/main';
 import { Right } from './components/right/right';
 import { Content } from './components/content/content';
 import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
-import { TodoItem } from './components/todo-item/todo-item';
 import { ITodo } from './components/ITodo';
 import { ITodoActions } from './components/ITodoActions';
+import { TodoList } from './components/todo-list/todo-list';
 
 import block from 'bem-cn-lite';
 
 import './App.css';
-
-interface ITodoListProps {
-    todos: ITodo[];
-    todoActions: ITodoActions;
-    todoCompare: (l: ITodo, r: ITodo) => number;
-}
-
-function TodoList(props: ITodoListProps) {
-    const { todos, todoActions, todoCompare } = props;
-
-    const content = todos === undefined
-        ? <p><em>Loading...</em></p>
-        :
-        <div>
-            {todos
-                .sort(todoCompare)
-                .map(todo =>
-                    <TodoItem key={todo.id} todo={todo} todoActions={todoActions} />
-            )}
-        </div>;
-
-    return content;
-}
 
 function TodoSort() {
     return (
