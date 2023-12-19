@@ -2,7 +2,7 @@ import { useEffect, useState, MouseEventHandler } from 'react';
 import { HashRouter, Route, Routes, NavLink, useParams } from 'react-router-dom';
 import { useId } from 'react';
 import { Header } from './components/header/header';
-import { Main } from './components/Main/Main';
+import { Main } from './components/main/main';
 import { Right } from './components/Right/Right';
 import { Content } from './components/content/Content';
 import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
