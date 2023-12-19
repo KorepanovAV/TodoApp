@@ -4,7 +4,7 @@ import { useId } from 'react';
 import { Header } from './components/Header/Header';
 import { Main } from './components/Main/Main';
 import { Right } from './components/Right/Right';
-import { Content } from './components/Content/Content';
+import { Content } from './components/content/Content';
 import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
 
 import block from 'bem-cn-lite';
