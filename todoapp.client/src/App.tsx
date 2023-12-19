@@ -6,52 +6,13 @@ import { Main } from './components/main/main';
 import { Right } from './components/right/right';
 import { Content } from './components/content/content';
 import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
+import { TodoItem } from './components/todo-item/todo-item';
 
 import block from 'bem-cn-lite';
 
 import './App.css';
-
-
-interface ITodo {
-    id: number;
-    text: string;
-    important: boolean;
-    done: boolean;
-}
-
-interface ITodoActions {
-    onTodoDelete: (todo: ITodo) => void;
-    onTodoPerform: (todo: ITodo) => void;
-    onTodoToWork: (todo: ITodo) => void;
-}
-
-interface ITodoItemProps {
-    todo: ITodo;
-    todoActions: ITodoActions;
-}
-
-function TodoItem(props: ITodoItemProps) {
-    const { todo, todoActions: { onTodoDelete, onTodoPerform, onTodoToWork } } = props;
-
-    const importanceMark = todo.important
-        ? <span className="important">!</span>
-        : <span className="important">&nbsp;</span>;
-
-    const actionButton = todo.done
-        ? <input type="button" value="To work" onClick={() => onTodoToWork(todo)} />
-        : <input type="button" value="Perform" onClick={() => onTodoPerform(todo)} />;
-
-    return (
-        <>
-            <div className="TodoItem">
-                {importanceMark}&nbsp;
-                <a href={`#/todo/${todo.id}`}>{todo.text}</a>&nbsp;
-                {actionButton}&nbsp;
-                <input type="button" value="Delete" onClick={() => onTodoDelete(todo)} />
-            </div>
-        </>
-    );
-}
+import { ITodo } from './components/ITodo';
+import { ITodoActions } from './components/ITodoActions';
 
 interface ITodoListProps {
     todos: ITodo[];
