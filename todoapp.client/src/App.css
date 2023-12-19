@@ -4,28 +4,6 @@
     flex-direction: column;
 }
 
-.header {
-    background-color: var(--persian-green);
-    padding: 1em;
-}
-
-.main {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-}
-
-.right {
-    background-color: var(--saffron);
-    flex: 0 0 12em;
-    padding: 1em;
-}
-
-.content {
-    background-color: var(--sandy-brown);
-    flex: 1;
-}
-
 .TaskAdder_label {
     margin-right: 1em;
 }
