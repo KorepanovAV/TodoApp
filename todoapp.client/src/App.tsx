@@ -7,12 +7,12 @@ import { Right } from './components/right/right';
 import { Content } from './components/content/content';
 import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
 import { TodoItem } from './components/todo-item/todo-item';
+import { ITodo } from './components/ITodo';
+import { ITodoActions } from './components/ITodoActions';
 
 import block from 'bem-cn-lite';
 
 import './App.css';
-import { ITodo } from './components/ITodo';
-import { ITodoActions } from './components/ITodoActions';
 
 interface ITodoListProps {
     todos: ITodo[];
