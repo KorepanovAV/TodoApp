@@ -5,36 +5,12 @@ import { Header } from './components/Header/Header';
 import { Main } from './components/Main/Main';
 import { Right } from './components/Right/Right';
 import { Content } from './components/Content/Content';
+import { AddTodo, IAddTodo } from './components/add-todo/add-todo';
+
+import block from 'bem-cn-lite';
 
 import './App.css';
 
-interface IAddTodo {
-    text?: string;
-    important?: boolean;
-}
-
-interface IAddTodoProps {
-    onAddTodo: (todo?: IAddTodo) => void;
-}
-
-function AddTodo(props: IAddTodoProps) {
-    const { onAddTodo } = props;
-    const checkboxLabelId = useId();
-    const [form, setForm] = useState<IAddTodo>();
-    const addClickHandler: MouseEventHandler = () => onAddTodo(form);
-
-    return (
-        <div className="AddTodo">
-            <label className="TaskAdder_label TaskAdder_element" >Add new task</label>
-            <input className="TaskAdder_element TaskAdder_text" type="text" placeholder="Text" onChange={(e) => setForm({ ...form, text: e.target.value })} />
-
-            <input className="TaskAdder_element" type="checkbox" id={checkboxLabelId} onChange={(e) => setForm({ ...form, important: e.target.checked })} />
-            <label className="TaskAdder_element" htmlFor={checkboxLabelId}>Important</label>
-
-            <input className="TaskAdder_element" type="button" value="Add" onClick={addClickHandler} />
-        </div>
-    );
-}
 
 interface ITodo {
     id: number;

@@ -1,0 +1,15 @@
+@b add-todo-element {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+@b add-todo {
+
+    @e text-label {
+        margin-right: 1em;
+    }
+
+    @e text {
+        width: 50%;
+    }
+}

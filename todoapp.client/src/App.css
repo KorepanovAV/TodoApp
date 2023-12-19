@@ -4,19 +4,6 @@
     flex-direction: column;
 }
 
-.TaskAdder_label {
-    margin-right: 1em;
-}
-
-.TaskAdder_text {
-    width: 50%;
-}
-
-.TaskAdder_element {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-}
-
 .TodoItem {
     margin: 1em;
     text-align: center;
