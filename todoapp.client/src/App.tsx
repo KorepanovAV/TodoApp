@@ -1,7 +1,7 @@
 import { useEffect, useState, MouseEventHandler } from 'react';
 import { HashRouter, Route, Routes, NavLink, useParams } from 'react-router-dom';
 import { useId } from 'react';
-import { Header } from './components/Header/Header';
+import { Header } from './components/header/header';
 import { Main } from './components/Main/Main';
 import { Right } from './components/Right/Right';
 import { Content } from './components/content/Content';
