@@ -1,5 +1,5 @@
 ﻿import { ReactNode } from 'react';
-import { Panel } from '../Panel/Panel';
+import { Panel } from '../panel/panel';
 import block from 'bem-cn-lite';
 
 import './header.css';
