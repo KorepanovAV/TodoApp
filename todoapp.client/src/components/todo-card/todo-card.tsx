@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useState, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { ITodo } from "../ITodo";
 
@@ -8,35 +8,34 @@ export function TodoCard() {
     const params = useParams<{ id: string }>();
     const id: number = Number(params.id);
     const [todo, setTodo] = useState<ITodo>();
-    const [form, setForm] = useState<{ text?: string, important?: boolean, done?: boolean }>({});
 
     const [textId, importantId, doneId] = [useId(), useId(), useId()];
+    const [textRef, importantRef, doneRef] = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
 
     useEffect(() => {
         getTodo(id);
-        setForm({ ...todo });
     }, [id, todo]);
 
     return (
         <div>
             <div><NavLink to="/">Вернуться в список</NavLink></div>
-            <form>
+            <div>
                 <div>
                     <label htmlFor={textId}>Текст задачи:</label>
-                    <input id={textId} type="text" defaultValue={todo?.text} onChange={(e) => setForm({ ...form, text: e.target.value })} />
+                    <input id={textId} type="text" defaultValue={todo?.text} ref={textRef} />
                 </div>
                 <div>
-                    <input id={importantId} type="checkbox" defaultChecked={todo?.important} onChange={(e) => setForm({ ...form, important: e.target.checked })} />
+                    <input id={importantId} type="checkbox" defaultChecked={todo?.important} ref={importantRef} />
                     <label htmlFor={importantId}>Задача важная</label>
                 </div>
                 <div>
-                    <input id={doneId} type="checkbox" defaultChecked={todo?.done} onChange={(e) => setForm({ ...form, done: e.target.checked })} />
+                    <input id={doneId} type="checkbox" defaultChecked={todo?.done} ref={doneRef} />
                     <label htmlFor={doneId}>Выполнена</label>
                 </div>
                 <div>
-                    <input type="submit" value="Сохранить" onClick={() => updateTodo(id, form.text, form.important, form.done)} />
+                    <input type="button" value="Сохранить" onClick={() => updateTodo(id, textRef.current?.value, importantRef.current?.checked, doneRef.current?.checked)} />
                 </div>
-            </form>
+            </div>
         </div>
     );
 
