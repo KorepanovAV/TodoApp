@@ -9,6 +9,13 @@
     }
   },
   "profiles": {
+    "Electron.NET App": {
+        "commandName": "Executable",
+        "executablePath": "dotnet",
+        "commandLineArgs": "electronize start",
+        "workingDirectory": "."
+    },
+
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,

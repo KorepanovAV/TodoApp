@@ -1,9 +1,14 @@
+using ElectronNET.API;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseElectron(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddElectron();
 
 var app = builder.Build();
 
@@ -70,7 +75,10 @@ todosGroup.MapDelete("/{id:long}",
 
 app.MapFallbackToFile("/index.html");
 
-app.Run();
+await app.StartAsync();
+await Electron.WindowManager.CreateWindowAsync();
+
+await app.WaitForShutdownAsync();
 
 internal record Todo(long Id, string Text, bool Important, bool Done);
 
