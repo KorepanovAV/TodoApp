@@ -29,8 +29,10 @@ export function Todos(props: ITodosProps) {
 
 
     useEffect(() => {
-        populateTodos();
-    }, []);
+        if (todos.length == 0) {
+            populateTodos();
+        }
+    }, [todos]);
 
     return (
         <>
@@ -50,24 +52,27 @@ export function Todos(props: ITodosProps) {
 
     async function handleAddTodo(todo?: IAddTodo) {
         const body = JSON.stringify({ text: "empty", important: false, done: false, ...todo });
-        await fetch('api/todos', { method: 'POST', headers: { "Content-Type": "application/json", }, body });
-        await populateTodos();
+        const response = await fetch('api/todos', { method: 'POST', headers: { "Content-Type": "application/json", }, body });
+        const data = await response.json() as ITodo;
+        setTodos([...todos, data]);
     }
 
     async function handleTodoDelete(todo: ITodo) {
         await fetch(`api/todos/${todo.id}`, { method: 'DELETE' });
-        await populateTodos();
+        setTodos([...todos.filter((v) => v.id != todo.id)]);
     }
 
     async function handleTodoPerform(todo: ITodo) {
-        const body = JSON.stringify({ ...todo, done: true });
+        const data: ITodo = { ...todo, done: true };
+        const body = JSON.stringify(data);
         await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
-        await populateTodos();
+        setTodos([...todos.map(e => e.id == data.id ? data : e)]);
     }
 
     async function handleTodoToWork(todo: ITodo) {
-        const body = JSON.stringify({ ...todo, done: false });
+        const data: ITodo = { ...todo, done: false };
+        const body = JSON.stringify(data);
         await fetch(`api/todos/${todo.id}`, { method: 'PUT', headers: { "Content-Type": "application/json", }, body })
-        await populateTodos();
+        setTodos([...todos.map(e => e.id == data.id ? data : e)]);
     }
 }
