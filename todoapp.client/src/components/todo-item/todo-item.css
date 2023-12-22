@@ -8,6 +8,10 @@
 
     @e text {
         flex: 1 1 auto;
+
+        @m done {
+            text-decoration-line: line-through underline;
+        }
     }
 
     @e action-button {

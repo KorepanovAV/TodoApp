@@ -3,6 +3,7 @@ import { ITodoActions } from "../ITodoActions";
 import block from 'bem-cn-lite';
 
 import './todo-item.css';
+import { NavLink } from "react-router-dom";
 
 const b = block('todo-item');
 
@@ -24,7 +25,7 @@ export function TodoItem(props: ITodoItemProps) {
         <>
             <div className={b(null, className)} >
                 <div className={b('importance')} >{todo.important ? '⚡' : ''}</div>
-                <a className={b('text')} href={`#/todo/${todo.id}`}>{todo.text}</a>
+                <NavLink className={b('text', { 'done': todo.done })} to={`/todo/${todo.id}`} >{todo.text}</NavLink>
                 <input className={b('action-button', { 'size': true })} type="button" {...actionProps} />
                 <input className={b('delete-button')} type="button" value="Удалить" onClick={() => onTodoDelete(todo)} />
             </div>
