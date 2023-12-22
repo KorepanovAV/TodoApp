@@ -1,4 +1,6 @@
 @b content {
     background-color: var(--sandy-brown);
     flex: 1;
+
+    overflow: auto;
 }
