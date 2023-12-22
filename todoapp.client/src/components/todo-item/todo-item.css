@@ -1,4 +1,24 @@
 @b todo-item {
-    margin: 1em;
-    text-align: center;
+    display: flex;
+    gap: 0.25em;
+
+    @e importance {
+        flex: 0 1 1.5em;
+    }
+
+    @e text {
+        flex: 1 1 auto;
+    }
+
+    @e action-button {
+        flex: 0 1 auto;
+
+        @m size {
+            width: 124px;
+        }
+    }
+
+    @e delete-button {
+        flex: 0 1 auto;
+    }
 }
