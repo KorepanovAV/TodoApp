@@ -9,6 +9,7 @@ export interface IAddTodo {
 }
 
 interface IAddTodoProps {
+    className?: string;
     onAddTodo: (todo?: IAddTodo) => void;
 }
 
@@ -23,11 +24,15 @@ export function AddTodo(props: IAddTodoProps) {
 
     return (
         <div className={b()} >
-            <label className={b('text-label', e())} >Текст новой задачи:</label>
-            <input className={b('text', e())} type="text" placeholder="Текст" onChange={(e) => setForm({ ...form, text: e.target.value })} />
+            <div className={b('text')}>
+                <label className={b('text-label', e())} >Текст новой задачи:</label>
+                <input className={b('text-value', e())} type="text" placeholder="Текст" onChange={(e) => setForm({ ...form, text: e.target.value })} />
+            </div>
 
-            <input className={b('important', e())} type="checkbox" id={checkboxLabelId} onChange={(e) => setForm({ ...form, important: e.target.checked })} />
-            <label className={b('important-label', e())} htmlFor={checkboxLabelId}>Задача важная</label>
+            <div className={b('important')}>
+                <input className={b('important-value', e())} type="checkbox" id={checkboxLabelId} onChange={(e) => setForm({ ...form, important: e.target.checked })} />
+                <label className={b('important-label', e())} htmlFor={checkboxLabelId}>Задача важная</label>
+            </div>
 
             <input className={b('add-button', e())} type="button" value="Добавить" onClick={addClickHandler} />
         </div>
