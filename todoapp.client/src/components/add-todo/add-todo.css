@@ -1,15 +1,25 @@
-@b add-todo-element {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-}
-
 @b add-todo {
-
-    @e text-label {
-        margin-right: 1em;
-    }
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
 
     @e text {
-        width: 50%;
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+    }
+
+    @e text-label {
+    }
+
+    @e text-value {
+        flex: 1 1 auto;
+    }
+
+    @e important {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
     }
 }

@@ -1,8 +1,13 @@
 import { useEffect, useId, useState, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { ITodo } from "../ITodo";
+import { Header } from "../header/header";
+import { Content } from "../content/content";
+import block from 'bem-cn-lite';
 
 import './todo-card.css';
+
+const b = block('todo-card');
 
 export function TodoCard() {
     const params = useParams<{ id: string }>();
@@ -17,25 +22,32 @@ export function TodoCard() {
     }, [id, todo]);
 
     return (
-        <div>
-            <div><NavLink to="/">Вернуться в список</NavLink></div>
-            <div>
-                <div>
-                    <label htmlFor={textId}>Текст задачи:</label>
-                    <input id={textId} type="text" defaultValue={todo?.text} ref={textRef} />
+        <div className={b()}>
+            <Header>
+                <NavLink className={b('return-back')} to="/">Вернуться в список</NavLink>
+            </Header>
+
+            <Content>
+                <div className={b('card')}>
+                    <label className={b('text-label')} htmlFor={textId}>Текст задачи:</label>
+                    <div className={b('props')}>
+                        <div>
+                            <input id={textId} type="text" defaultValue={todo?.text} ref={textRef} />
+                        </div>
+                        <div>
+                            <input id={importantId} type="checkbox" defaultChecked={todo?.important} ref={importantRef} />
+                            <label htmlFor={importantId}>Задача важная</label>
+                        </div>
+                        <div>
+                            <input id={doneId} type="checkbox" defaultChecked={todo?.done} ref={doneRef} />
+                            <label htmlFor={doneId}>Выполнена</label>
+                        </div>
+                        <div>
+                            <input type="button" value="Сохранить" onClick={() => updateTodo(id, textRef.current?.value, importantRef.current?.checked, doneRef.current?.checked)} />
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <input id={importantId} type="checkbox" defaultChecked={todo?.important} ref={importantRef} />
-                    <label htmlFor={importantId}>Задача важная</label>
-                </div>
-                <div>
-                    <input id={doneId} type="checkbox" defaultChecked={todo?.done} ref={doneRef} />
-                    <label htmlFor={doneId}>Выполнена</label>
-                </div>
-                <div>
-                    <input type="button" value="Сохранить" onClick={() => updateTodo(id, textRef.current?.value, importantRef.current?.checked, doneRef.current?.checked)} />
-                </div>
-            </div>
+            </Content>
         </div>
     );
 
